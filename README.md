@@ -2,6 +2,10 @@
 
 Containerised Next.js 14 API project with TypeScript for an Employee Registration and Time Logging System. Features JWT authentication, Prisma ORM with PostgreSQL, Redis for audit logs, and Docker containerization ready for AWS ECR + ECS Fargate deployment.
 
+## 🚀 Quick Start
+
+**Want to get started quickly?** Check out the [Quick Start Guide](QUICKSTART.md) for a streamlined setup process using Docker Compose.
+
 ## Features
 
 - 🔐 JWT Authentication for admin users
@@ -13,6 +17,7 @@ Containerised Next.js 14 API project with TypeScript for an Employee Registratio
 - 🐳 Fully containerized with Docker
 - ☁️ AWS ECS Fargate deployment ready
 - 📮 Postman collection included
+- ⚡ CI/CD pipeline with GitHub Actions
 
 ## Tech Stack
 
