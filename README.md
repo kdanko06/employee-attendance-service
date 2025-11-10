@@ -138,6 +138,53 @@ Content-Type: application/json
 }
 ```
 
+### Employee Management (Complete CRUD)
+
+All employee endpoints require Bearer token authentication.
+
+#### Create Employee
+```
+POST /api/employees
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "email": "employee@example.com",
+  "name": "Employee Name",
+  "department": "Engineering"
+}
+```
+
+#### List All Employees
+```
+GET /api/employees?page=1&limit=50&department=Engineering
+Authorization: Bearer <token>
+```
+
+#### Get Employee by ID
+```
+GET /api/employees/{id}
+Authorization: Bearer <token>
+```
+
+#### Update Employee
+```
+PUT /api/employees/{id}
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "name": "Updated Name",
+  "department": "Product"
+}
+```
+
+#### Delete Employee
+```
+DELETE /api/employees/{id}
+Authorization: Bearer <token>
+```
+
 ### Attendance Management
 
 All attendance endpoints require Bearer token authentication.

@@ -122,6 +122,229 @@ Content-Type: application/json
 
 ---
 
+## Employee Endpoints (Complete CRUD)
+
+All employee endpoints require admin authentication.
+
+### Create Employee
+
+Creates a new employee record without signing them in.
+
+**Endpoint:** `POST /api/employees`
+
+**Headers:**
+```
+Content-Type: application/json
+Authorization: Bearer <token>
+```
+
+**Request Body:**
+```json
+{
+  "email": "john.doe@example.com",
+  "name": "John Doe",
+  "department": "Engineering"
+}
+```
+
+**Response:** `201 Created`
+```json
+{
+  "message": "Employee created successfully",
+  "employee": {
+    "id": "uuid",
+    "email": "john.doe@example.com",
+    "name": "John Doe",
+    "department": "Engineering",
+    "createdAt": "2024-01-01T08:00:00.000Z"
+  }
+}
+```
+
+**Errors:**
+- `400` - Missing required fields (email or name)
+- `401` - Unauthorized (invalid or missing token)
+- `403` - Forbidden (not an admin)
+- `409` - Employee with this email already exists
+- `500` - Internal server error
+
+---
+
+### List All Employees
+
+Retrieves all employees with pagination and optional filtering.
+
+**Endpoint:** `GET /api/employees`
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**Query Parameters:**
+- `page` (optional) - Page number, default: 1
+- `limit` (optional) - Results per page, default: 50
+- `department` (optional) - Filter by department name
+
+**Example Requests:**
+
+Get all employees:
+```
+GET /api/employees?page=1&limit=50
+```
+
+Filter by department:
+```
+GET /api/employees?department=Engineering&page=1&limit=50
+```
+
+**Response:** `200 OK`
+```json
+{
+  "employees": [
+    {
+      "id": "uuid",
+      "email": "john.doe@example.com",
+      "name": "John Doe",
+      "department": "Engineering",
+      "createdAt": "2024-01-01T08:00:00.000Z",
+      "updatedAt": "2024-01-01T08:00:00.000Z",
+      "_count": {
+        "attendances": 15
+      }
+    }
+  ],
+  "pagination": {
+    "total": 100,
+    "page": 1,
+    "limit": 50,
+    "totalPages": 2
+  }
+}
+```
+
+**Errors:**
+- `401` - Unauthorized (invalid or missing token)
+- `403` - Forbidden (not an admin)
+- `500` - Internal server error
+
+---
+
+### Get Employee by ID
+
+Retrieves a single employee with their recent attendance records.
+
+**Endpoint:** `GET /api/employees/{id}`
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**Response:** `200 OK`
+```json
+{
+  "employee": {
+    "id": "uuid",
+    "email": "john.doe@example.com",
+    "name": "John Doe",
+    "department": "Engineering",
+    "createdAt": "2024-01-01T08:00:00.000Z",
+    "updatedAt": "2024-01-01T08:00:00.000Z",
+    "recentAttendances": [
+      {
+        "id": "uuid",
+        "employeeId": "uuid",
+        "signInTime": "2024-01-01T09:00:00.000Z",
+        "signOffTime": "2024-01-01T17:00:00.000Z",
+        "createdAt": "2024-01-01T09:00:00.000Z",
+        "updatedAt": "2024-01-01T17:00:00.000Z"
+      }
+    ]
+  }
+}
+```
+
+**Errors:**
+- `401` - Unauthorized (invalid or missing token)
+- `403` - Forbidden (not an admin)
+- `404` - Employee not found
+- `500` - Internal server error
+
+---
+
+### Update Employee
+
+Updates an employee's information.
+
+**Endpoint:** `PUT /api/employees/{id}`
+
+**Headers:**
+```
+Content-Type: application/json
+Authorization: Bearer <token>
+```
+
+**Request Body:**
+```json
+{
+  "name": "John Doe Updated",
+  "email": "john.doe.new@example.com",
+  "department": "Product Management"
+}
+```
+
+Note: All fields are optional. Only include fields you want to update.
+
+**Response:** `200 OK`
+```json
+{
+  "message": "Employee updated successfully",
+  "employee": {
+    "id": "uuid",
+    "email": "john.doe.new@example.com",
+    "name": "John Doe Updated",
+    "department": "Product Management",
+    "updatedAt": "2024-01-01T10:00:00.000Z"
+  }
+}
+```
+
+**Errors:**
+- `401` - Unauthorized (invalid or missing token)
+- `403` - Forbidden (not an admin)
+- `404` - Employee not found
+- `409` - Email is already in use by another employee
+- `500` - Internal server error
+
+---
+
+### Delete Employee
+
+Deletes an employee and all their attendance records (cascading delete).
+
+**Endpoint:** `DELETE /api/employees/{id}`
+
+**Headers:**
+```
+Authorization: Bearer <token>
+```
+
+**Response:** `200 OK`
+```json
+{
+  "message": "Employee deleted successfully"
+}
+```
+
+**Errors:**
+- `401` - Unauthorized (invalid or missing token)
+- `403` - Forbidden (not an admin)
+- `404` - Employee not found
+- `500` - Internal server error
+
+---
+
 ## Attendance Endpoints
 
 All attendance endpoints require admin authentication.
