@@ -1,0 +1,23 @@
+version: '3.10'
+services:
+  api:
+    build: .
+    environment:
+      DATA_FILE_PATH: /app/data/store.json
+      JWT_SECRET: local-development-secret
+      TZ: Australia/Sydney
+    volumes:
+      - app-data:/app/data
+    ports:
+      - '3000:3000'
+  worker-logs:
+    build: .
+    command: npm run worker:logs
+    environment:
+      DATA_FILE_PATH: /app/data/store.json
+      JWT_SECRET: local-development-secret
+      TZ: Australia/Sydney
+    volumes:
+      - app-data:/app/data
+volumes:
+  app-data:

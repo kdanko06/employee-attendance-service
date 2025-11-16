@@ -1,21 +1,36 @@
 {
-  "name": "logging-system-assessment",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "employee-attendance-service",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18.18.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "seed": "tsx scripts/seed.ts",
+    "worker:logs": "tsx worker/logs.ts"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/kdanko06/employee-attendance-service.git"
+  "dependencies": {
+    "async-mutex": "^0.5.0",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
+    "jsonwebtoken": "^9.0.2",
+    "next": "^14.2.5",
+    "pino": "^9.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "zod": "^3.23.8"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/kdanko06/employee-attendance-service/issues"
-  },
-  "homepage": "https://github.com/kdanko06/employee-attendance-service#readme"
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^20.12.12",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "tsx": "^4.11.0",
+    "typescript": "^5.4.5"
+  }
 }
