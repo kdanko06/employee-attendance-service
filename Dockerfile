@@ -22,4 +22,6 @@ COPY --from=builder /app .
 RUN mkdir -p /app/data && chown -R nextjs:nextjs /app
 USER nextjs
 EXPOSE 3000
-CMD ["npm","run","start"]
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
+CMD ["node",".next/standalone/server.js"]
