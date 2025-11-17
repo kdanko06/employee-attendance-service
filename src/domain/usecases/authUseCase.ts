@@ -2,7 +2,7 @@ import { EmployerRepositoryPort } from '../ports/employerRepository';
 import { PasswordHasherPort } from '../ports/passwordHasher';
 import { TokenServicePort } from '../ports/tokenService';
 import { HttpError } from '../errors';
-import { QueuePort } from '../ports/queuePort';
+import { AuditLogRepositoryPort } from '../ports/auditLogRepository';
 
 interface LoginInput {
   email: string;
@@ -14,7 +14,7 @@ export class AuthUseCase {
     private readonly repo: EmployerRepositoryPort,
     private readonly hasher: PasswordHasherPort,
     private readonly tokens: TokenServicePort,
-    private readonly queue: QueuePort
+    private readonly auditLogs: AuditLogRepositoryPort
   ) {}
 
   async login(input: LoginInput) {
@@ -29,10 +29,10 @@ export class AuthUseCase {
     }
 
     const accessToken = await this.tokens.sign({ sub: employer.id, role: employer.role });
-    await this.queue.enqueue('audit:jobs', {
+    await this.auditLogs.create({
       action: 'auth.login',
       employerId: employer.id,
-      email: employer.email
+      metadata: { email: employer.email }
     });
 
     return {

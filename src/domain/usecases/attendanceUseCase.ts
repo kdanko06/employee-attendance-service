@@ -1,5 +1,5 @@
 import { ShiftRepositoryPort } from '../ports/shiftRepository';
-import { QueuePort } from '../ports/queuePort';
+import { AuditLogRepositoryPort } from '../ports/auditLogRepository';
 import { HttpError } from '../errors';
 import { ShiftEntity } from '../entities/shift';
 
@@ -18,7 +18,7 @@ interface SignOffInput {
 export class AttendanceUseCase {
   constructor(
     private readonly shifts: ShiftRepositoryPort,
-    private readonly queue: QueuePort
+    private readonly auditLogs: AuditLogRepositoryPort
   ) {}
 
   async signIn(input: SignInInput): Promise<ShiftEntity> {
@@ -34,10 +34,10 @@ export class AttendanceUseCase {
       notes: input.notes
     });
 
-    await this.queue.enqueue('audit:jobs', {
+    await this.auditLogs.create({
       action: 'attendance.sign-in',
       employerId: input.employerId,
-      shiftId: shift.id
+      metadata: { shiftId: shift.id }
     });
 
     return shift;
@@ -55,10 +55,10 @@ export class AttendanceUseCase {
       notes: input.notes ?? openShift.notes ?? undefined
     });
 
-    await this.queue.enqueue('audit:jobs', {
+    await this.auditLogs.create({
       action: 'attendance.sign-off',
       employerId: input.employerId,
-      shiftId: shift.id
+      metadata: { shiftId: shift.id }
     });
 
     return shift;
@@ -73,19 +73,19 @@ export class AttendanceUseCase {
     updates: Partial<Pick<ShiftEntity, 'startedAt' | 'endedAt' | 'notes' | 'startTz' | 'endTz'>>
   ): Promise<ShiftEntity> {
     const shift = await this.shifts.updateShift(shiftId, updates);
-    await this.queue.enqueue('audit:jobs', {
+    await this.auditLogs.create({
       action: 'attendance.shift-updated',
-      shiftId,
-      updates
+      employerId: shift.employerId,
+      metadata: { shiftId, updates }
     });
     return shift;
   }
 
   async deleteShift(shiftId: string): Promise<void> {
     await this.shifts.deleteShift(shiftId);
-    await this.queue.enqueue('audit:jobs', {
+    await this.auditLogs.create({
       action: 'attendance.shift-deleted',
-      shiftId
+      metadata: { shiftId }
     });
   }
 }

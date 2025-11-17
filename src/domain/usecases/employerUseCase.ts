@@ -1,7 +1,7 @@
 import { EmployerEntity, EmployerRole } from '../entities/employer';
 import { EmployerRepositoryPort } from '../ports/employerRepository';
 import { PasswordHasherPort } from '../ports/passwordHasher';
-import { QueuePort } from '../ports/queuePort';
+import { AuditLogRepositoryPort } from '../ports/auditLogRepository';
 import { HttpError } from '../errors';
 
 interface CreateEmployerInput {
@@ -20,7 +20,7 @@ export class EmployerUseCase {
   constructor(
     private readonly repo: EmployerRepositoryPort,
     private readonly hasher: PasswordHasherPort,
-    private readonly queue: QueuePort
+    private readonly auditLogs: AuditLogRepositoryPort
   ) {}
 
   async createEmployer(input: CreateEmployerInput): Promise<EmployerEntity> {
@@ -37,10 +37,10 @@ export class EmployerUseCase {
       passwordHash
     });
 
-    await this.queue.enqueue('audit:jobs', {
+    await this.auditLogs.create({
       action: 'employer.created',
       employerId: employer.id,
-      role: employer.role
+      metadata: { role: employer.role }
     });
 
     return employer;
@@ -60,17 +60,17 @@ export class EmployerUseCase {
 
   async updateEmployer(id: string, input: UpdateEmployerInput): Promise<EmployerEntity> {
     const employer = await this.repo.update(id, input);
-    await this.queue.enqueue('audit:jobs', {
+    await this.auditLogs.create({
       action: 'employer.updated',
       employerId: employer.id,
-      changes: input
+      metadata: { changes: input }
     });
     return employer;
   }
 
   async deleteEmployer(id: string): Promise<void> {
     await this.repo.delete(id);
-    await this.queue.enqueue('audit:jobs', {
+    await this.auditLogs.create({
       action: 'employer.deleted',
       employerId: id
     });

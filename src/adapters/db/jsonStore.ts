@@ -33,24 +33,16 @@ export interface AuditLogRecord {
   createdAt: string;
 }
 
-export interface QueueJobRecord {
-  id: string;
-  payload: Record<string, unknown>;
-  enqueuedAt: string;
-}
-
 export interface DatabaseState {
   employers: EmployerRecord[];
   shifts: ShiftRecord[];
   auditLogs: AuditLogRecord[];
-  queues: Record<string, QueueJobRecord[]>;
 }
 
 const defaultState: DatabaseState = {
   employers: [],
   shifts: [],
-  auditLogs: [],
-  queues: {}
+  auditLogs: []
 };
 
 class JsonFileDatabase {
